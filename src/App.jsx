@@ -9,6 +9,8 @@ const ProductsList = React.lazy(() => {
 function App() {
 	const [count, setCount] = React.useState(0)
 	const [sort, setSort] = React.useState(false)
+	const [darkMode, setDarkMode] = React.useState(false)
+	const [selectedProduct, setSelectedProduct] = React.useState(null)
 
 	function increment() {
 		setCount((prevCount) => prevCount + 1)
@@ -17,38 +19,28 @@ function App() {
 	function decrement() {
 		setCount((prevCount) => prevCount - 1)
 	}
-	/**
-	 * NOTE: I recommend opening the dev tools performance tab and throttling
-	 * to a 6x slowdown to help highlight the delays that are happening with
-	 * the expensive "sort" method call on each render.
-	 */
-	// Comment these 4 lines out when testing your solution below
-	// const startTime1 = Date.now()
-	// const sortedProducts = [...productsData].sort((a, b) =>
-	// 	a.name.localeCompare(b.name)
-	// )
-	// const endTime1 = Date.now()
-	// console.log(`Took ${endTime1 - startTime1}ms`)
 
 	const sortedProducts = React.useMemo(() => {
 		return [...productsData].sort((a, b) => a.name.localeCompare(b.name))
 	}, [productsData])
 
-	const startTime2 = Date.now()
-
-	/**
-	 * Challenge: memoize the sorting calculation of sortedProducts
-	 * so that it only happens if the value of "sort" changes.
-	 *
-	 * Make sure to comment out the version
-	 * above when testing your version here
-	 */
-
-	const endTime2 = Date.now()
-	console.log(`Took ${endTime2 - startTime2}ms`)
-
 	const visibleProducts = sort ? sortedProducts : productsData
 
+	const productStyles = React.useMemo(() => {
+		return {
+			backgroundColor: darkMode ? '#2b283a' : 'whitesmoke',
+			color: darkMode ? 'white' : '#2b283a',
+		}
+	}, [darkMode])
+
+	const selectedStyles = {
+		backgroundColor: '#93c47d',
+	}
+
+	function chooseProduct(id) {
+		console.log('New product selected')
+		setSelectedProduct(id)
+	}
 	return (
 		<>
 			<h1>The current count is {count}</h1>
@@ -65,10 +57,30 @@ function App() {
 			</button>
 			<br />
 			<br />
+			<button
+				className="button"
+				onClick={() => setDarkMode((prev) => !prev)}
+			>
+				{darkMode ? 'Light' : 'Dark'}
+			</button>
+			<br />
+			<br />
 			<div className="products-list">
-				{visibleProducts.map((product) => (
-					<Product key={product.id} product={product} />
-				))}
+				{visibleProducts.map((product) => {
+					const isSelected = product.id === selectedProduct
+					return (
+						<Product
+							key={product.id}
+							product={product}
+							style={
+								isSelected
+									? { ...productStyles, ...selectedStyles }
+									: productStyles
+							}
+							chooseProduct={chooseProduct}
+						/>
+					)
+				})}
 			</div>
 		</>
 	)
