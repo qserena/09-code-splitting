@@ -1,5 +1,6 @@
 import React from 'react'
-//import ProductsList from './ProductsList'
+import Product from './Product'
+import productsData from './data'
 
 const ProductsList = React.lazy(() => {
 	return import('./ProductsList')
@@ -7,7 +8,7 @@ const ProductsList = React.lazy(() => {
 
 function App() {
 	const [count, setCount] = React.useState(0)
-	const [showProducts, setShowProducts] = React.useState(false)
+	const [sort, setSort] = React.useState(false)
 
 	function increment() {
 		setCount((prevCount) => prevCount + 1)
@@ -16,6 +17,37 @@ function App() {
 	function decrement() {
 		setCount((prevCount) => prevCount - 1)
 	}
+	/**
+	 * NOTE: I recommend opening the dev tools performance tab and throttling
+	 * to a 6x slowdown to help highlight the delays that are happening with
+	 * the expensive "sort" method call on each render.
+	 */
+	// Comment these 4 lines out when testing your solution below
+	// const startTime1 = Date.now()
+	// const sortedProducts = [...productsData].sort((a, b) =>
+	// 	a.name.localeCompare(b.name)
+	// )
+	// const endTime1 = Date.now()
+	// console.log(`Took ${endTime1 - startTime1}ms`)
+
+	const sortedProducts = React.useMemo(() => {
+		return [...productsData].sort((a, b) => a.name.localeCompare(b.name))
+	}, [productsData])
+
+	const startTime2 = Date.now()
+
+	/**
+	 * Challenge: memoize the sorting calculation of sortedProducts
+	 * so that it only happens if the value of "sort" changes.
+	 *
+	 * Make sure to comment out the version
+	 * above when testing your version here
+	 */
+
+	const endTime2 = Date.now()
+	console.log(`Took ${endTime2 - startTime2}ms`)
+
+	const visibleProducts = sort ? sortedProducts : productsData
 
 	return (
 		<>
@@ -28,19 +60,16 @@ function App() {
 			</button>
 			<br />
 			<br />
-			<button
-				className="button"
-				onClick={() => setShowProducts((prev) => !prev)}
-			>
-				Show Products
+			<button className="button" onClick={() => setSort((prev) => !prev)}>
+				{sort ? 'Unsort' : 'Sort'}
 			</button>
 			<br />
 			<br />
-			<React.Suspense fallback={<h2>Loading...</h2>}>
-				<div className="products-list">
-					{showProducts && <ProductsList />}
-				</div>
-			</React.Suspense>
+			<div className="products-list">
+				{visibleProducts.map((product) => (
+					<Product key={product.id} product={product} />
+				))}
+			</div>
 		</>
 	)
 }
