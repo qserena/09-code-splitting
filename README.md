@@ -1,8 +1,33 @@
-# React + Vite
+# Code Splitting
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Description
+A custom hook **useToggle** is created to achieve *the same behavior* as the React component Toggle in repository [04-headless-toggle-component](https://github.com/qserena/04-headless-toggle-component).
 
-Currently, two official plugins are available:
+useToggle uses another custom hook called **useEffectOnUpdate**, which is also contained in this repo.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**useToggle custom hook:**
+```
+import React from 'react'
+import useEffectOnUpdate from './useEffectOnUpdate'
+
+export default function useToggle({
+	initialValue = false,
+	onToggle = () => {},
+}) {
+	const [on, setOn] = React.useState(initialValue)
+
+	function toggle() {
+		setOn((prevOn) => !prevOn)
+	}
+
+	useEffectOnUpdate(onToggle, [on])
+
+	return [on, toggle]
+}
+```
+  
+## Technologies
+- React
+
+## Live link
+This implementation is not deployed anywhere. 
