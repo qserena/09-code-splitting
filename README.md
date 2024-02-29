@@ -1,9 +1,8 @@
 # Code Splitting
 
 ## Description
-A custom hook **useToggle** is created to achieve *the same behavior* as the React component Toggle in repository [04-headless-toggle-component](https://github.com/qserena/04-headless-toggle-component).
+This is an exercise in which **code splitting** is used to conditionally import "heavy" code only if/when needed.
 
-useToggle uses another custom hook called **useEffectOnUpdate**, which is also contained in this repo.
 
 **useToggle custom hook:**
 ```
